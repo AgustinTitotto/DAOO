@@ -1,4 +1,4 @@
-package Ejerc1;
+package CompleteTp;
 
 public enum Operator {
 
