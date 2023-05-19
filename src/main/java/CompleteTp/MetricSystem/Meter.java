@@ -1,41 +1,25 @@
 package CompleteTp.MetricSystem;
 
-import CompleteTp.Expression;
-import CompleteTp.Unit.Unit;
 
-public final class Meter extends Expression {
+public class Meter implements Distance, DistanceVisitor{
 
-    private final Double value;
-    private final Unit unit;
-
-    public Meter(Double value, Unit unit) {
-        super(value, unit);
-        this.value = value;
-        this.unit = unit;
+    @Override
+    public Double accept(DistanceVisitor visitor, Double value, Integer power) {
+        return visitor.toMeter(this, value, power);
     }
 
-    public Double toMeter() {
-        switch (unit.getSymbol()) {
-            case "m" -> {
-                return this.value;
-            }
-            case "km" -> {
-                return this.value * 1000;
-            }
-            case "cm" -> {
-                return this.value / 100;
-            }
-            default -> throw new RuntimeException("Unit not supported for meter class");
-        }
+    @Override
+    public Double toMeter(Kilometer kilometer, Double value, Integer power) {
+        return value * Math.pow(1000.0, power);
     }
 
-    public Double value() {
+    @Override
+    public Double toMeter(Centimeter centimeter, Double value, Integer power) {
+        return value / Math.pow(100.0, power);
+    }
+
+    @Override
+    public Double toMeter(Meter meter, Double value, Integer power) {
         return value;
     }
-
-    public Unit unit() {
-        return unit;
-    }
-
-
 }

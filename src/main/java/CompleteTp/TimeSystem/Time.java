@@ -1,40 +1,9 @@
 package CompleteTp.TimeSystem;
 
-import CompleteTp.Expression;
-import CompleteTp.Unit.Unit;
 
 
-public class Time extends Expression {
+public interface Time {
 
-    private Double value;
-    private Unit unit;
+    Double accept(TimeVisitor visitor, Double value);
 
-    public Time(Double value, Unit unit) {
-        super(value, unit);
-    }
-
-    private Double toSeconds() {
-        switch (unit.getSymbol()) {
-            case "s" -> {
-                return this.value;
-            }
-            case "min" -> {
-                return this.value * 60;
-            }
-            case "h" -> {
-                return this.value * 3600;
-            }
-            default -> throw new RuntimeException("Unit not supported for time class");
-        }
-    }
-
-    @Override
-    public Double getValue() {
-        return value;
-    }
-
-    @Override
-    public Unit getUnit() {
-        return unit;
-    }
 }

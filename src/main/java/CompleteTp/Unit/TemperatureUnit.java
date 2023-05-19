@@ -1,29 +1,18 @@
 package CompleteTp.Unit;
 
-import CompleteTp.Unit.Unit;
+import CompleteTp.TemperatureSystem.Temperature;
+import CompleteTp.TimeSystem.Unit;
 
 public class TemperatureUnit extends Unit {
 
+    private Temperature type;
 
-
-    public TemperatureUnit(String symbol, Integer power) {
-        super(symbol, power);
+    public TemperatureUnit(Temperature type, Integer power) {
+        super(power);
+        this.type = type;
     }
 
-    public Double toGenericValue(Double value) {
-        switch (this.getSymbol()) {
-            case "C" -> {
-                return value;
-            }
-            case "K" -> {
-                return value + 273.15;
-            }
-            case "F" -> {
-                return (value * (9.0 / 5.0)) + 32.0;
-            }
-            default -> throw new RuntimeException("Unit not supported for temperature class");
-        }
+    public Temperature getType() {
+        return type;
     }
-
-
 }

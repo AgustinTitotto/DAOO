@@ -1,23 +1,18 @@
 package CompleteTp.Unit;
 
-public class TimeUnit extends Unit{
+import CompleteTp.TimeSystem.Time;
+import CompleteTp.TimeSystem.Unit;
 
-    public TimeUnit(String symbol, Integer power) {
-        super(symbol, power);
+public class TimeUnit extends Unit {
+
+    private Time type;
+
+    public TimeUnit(Time type, Integer power) {
+        super(power);
+        this.type = type;
     }
 
-    public Double toGenericValue(Double value) {
-        switch (this.getSymbol()) {
-            case "s" -> {
-                return value;
-            }
-            case "min" -> {
-                return value * 60;
-            }
-            case "h" -> {
-                return value * 3600;
-            }
-            default -> throw new RuntimeException("Unit not supported for time class");
-        }
+    public Time getType() {
+        return type;
     }
 }

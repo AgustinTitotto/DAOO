@@ -1,81 +1,116 @@
 import CompleteTp.*;
+import CompleteTp.MetricSystem.Kilometer;
 import CompleteTp.MetricSystem.Meter;
-import CompleteTp.TemperatureSystem.Temperature;
-import CompleteTp.Unit.MeterUnit;
+import CompleteTp.Operations.DivisionExpression;
+import CompleteTp.Operations.Expr;
+import CompleteTp.Operations.MultiplicationExpression;
+import CompleteTp.Operations.SumExpression;
+import CompleteTp.System;
+import CompleteTp.Unit.DistanceUnit;
 import CompleteTp.Unit.TemperatureUnit;
-import CompleteTp.Unit.TimeUnit;
-import CompleteTp.Unit.Unit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class AbstractExpressionTest {
 
-
-//    @Test
-//    public void addMetricExpression() {
-//        Meter meter1 = new Meter(10.0, new Unit("m", 1));
-//        Meter meter2 = new Meter(10.0, new Unit("m", 1));
-//        BinaryExpression binaryExpression = new BinaryExpression(meter1, Operator.PLUS, meter2);
-//        Expression result = binaryExpression.resolve();
-//        Assertions.assertEquals(20.0, result.getValue());
-//        Assertions.assertEquals("m", result.getUnit().getSymbol());
-//        Assertions.assertEquals(1, result.getUnit().getPower());
-//    }
-//
-//    @Test
-//    public void multiplyDifferentExpressions() {
-//        Meter meter = new Meter(10.0, new Unit("m", 1));
-//        Temperature temperature = new Temperature(10.0, new Unit("C", 1));
-//        BinaryExpression binaryExpression = new BinaryExpression(meter, Operator.MULTIPLICATION, temperature);
-//        Expression result = binaryExpression.resolve();
-//        Assertions.assertEquals(100, result.getValue());
-//        Assertions.assertEquals("mC", result.getUnit().getSymbol());
-//        Assertions.assertEquals(1, result.getUnit().getPower());
-//    }
-//
-//    @Test
-//    public void multiplyDifferentComplexExpressions() {
-//        Expression expression1 = new Expression(10.0, new Unit("mC", 1));
-//        Expression expression2 = new Expression(10.0, new Unit("mC", 1));
-//        BinaryExpression binaryExpression = new BinaryExpression(expression1, Operator.MULTIPLICATION, expression2);
-//        Expression result = binaryExpression.resolve();
-//        Assertions.assertEquals(100, result.getValue());
-//        Assertions.assertEquals("mC", result.getUnit().getSymbol());
-//        Assertions.assertEquals(2, result.getUnit().getPower());
-//    }
-
-//    @Test
-//    public void multiplyComplexWithSimpleExpression() {
-//        Expr expression1 = new Expr(10.0, new Meter(1.0, new Unit("m", 2)), null, null);
-//        Expr expression2 = new Expr(10.0, null, new Temperature(1.0, new Unit("C", 1)), null);
-//        BinaryExpr binaryExpression = new BinaryExpr(expression1, Operator.MULTIPLICATION, expression2);
-//        Expr result = binaryExpression.resolve();
-//        Assertions.assertEquals(100, result.getValue());
-//        Assertions.assertEquals(2, result.getMeterUnit().unit().getPower());
-//        Assertions.assertEquals(1, result.getTemperatureUnit().unit().getPower());
-//    }
-
-
     @Test
-    public void multiplyComplexWithSimpleExpression() {
-        Expr expression1 = new Expr(10.0, new MeterUnit("m", 2), new TemperatureUnit("C", 0), new TimeUnit("s", 0));
-        Expr expression2 = new Expr(10.0, new MeterUnit("m", 0), new TemperatureUnit("C", 1), new TimeUnit("s", 0));
+    public void testMeterClass() {
+        Expr expression1 = new Expr(10.0, new DistanceUnit(System.METER, 1), new TemperatureUnit(System.CELSIUS, 0));
+        Expr expression2 = new Expr(10.0, new DistanceUnit(System.METER, 1), new TemperatureUnit(System.CELSIUS, 0));
         BinaryExpr binaryExpression = new BinaryExpr(expression1, Operator.MULTIPLICATION, expression2);
         Expr result = binaryExpression.resolve();
         Assertions.assertEquals(100, result.getValue());
-        Assertions.assertEquals(2, result.getMeterUnit().getPower());
+        Assertions.assertEquals(2, result.getDistanceUnit().getPower());
+    }
+
+    @Test
+    public void testMetricSum() {
+        Expr expression1 = new Expr(1.0, new DistanceUnit(new Kilometer(), 1), new TemperatureUnit(System.CELSIUS, 0));
+        Expr expression2 = new Expr(10.0, new DistanceUnit(System.METER, 1), new TemperatureUnit(System.CELSIUS, 0));
+        BinaryExpr binaryExpression = new BinaryExpr(expression1, Operator.PLUS, expression2);
+        Expr result = binaryExpression.resolve();
+        Assertions.assertEquals(1010.0, result.getValue());
+        Assertions.assertEquals(1, result.getDistanceUnit().getPower());
+    }
+
+    @Test
+    public void testMultiplicationWithDifferentUnis() {
+        Expr expression1 = new Expr(10.0, new DistanceUnit(System.METER, 0), new TemperatureUnit(System.CELSIUS, 1));
+        Expr expression2 = new Expr(10.0, new DistanceUnit(System.METER, 1), new TemperatureUnit(System.CELSIUS, 0));
+        Assertions.assertEquals(0, expression1.getDistanceUnit().getPower());
+        Assertions.assertEquals(0, expression2.getTemperatureUnit().getPower());
+        BinaryExpr binaryExpression = new BinaryExpr(expression1, Operator.MULTIPLICATION, expression2);
+        Expr result = binaryExpression.resolve();
+        Assertions.assertEquals(100, result.getValue());
+        Assertions.assertEquals(1, result.getDistanceUnit().getPower());
         Assertions.assertEquals(1, result.getTemperatureUnit().getPower());
     }
 
     @Test
-    public void multiply() {
-        Expr expression1 = new Expr(10.0, new MeterUnit("m", 2), new TemperatureUnit("C", 0), new TimeUnit("s", 0));
-        Expr expression2 = new Expr(10.0, new MeterUnit("m", 0), new TemperatureUnit("C", 1), new TimeUnit("s", 0));
+    public void testMultiplicationConversion() {
+        Expr expression1 = new Expr(10.0, new DistanceUnit(System.METER, 0), new TemperatureUnit(System.CELSIUS, 1));
+        Expr expression2 = new Expr(1.0, new DistanceUnit(new Kilometer(), 1), new TemperatureUnit(System.CELSIUS, 0));
         BinaryExpr binaryExpression = new BinaryExpr(expression1, Operator.MULTIPLICATION, expression2);
         Expr result = binaryExpression.resolve();
-        Assertions.assertEquals(100, result.getValue());
-        Assertions.assertEquals(2, result.getMeterUnit().getPower());
+        Assertions.assertEquals(10000.0, result.getValue());
+        Assertions.assertEquals(1, result.getDistanceUnit().getPower());
+        Assertions.assertEquals(Meter.class, result.getDistanceUnit().getType().getClass());
         Assertions.assertEquals(1, result.getTemperatureUnit().getPower());
+    }
+
+    @Test
+    public void testAddWithDifferentPower() {
+        Expr expression1 = new Expr(10.0, new DistanceUnit(System.METER, 2), new TemperatureUnit(System.CELSIUS, 1));
+        Expr expression2 = new Expr(10.0, new DistanceUnit(System.METER, 2), new TemperatureUnit(System.CELSIUS, 1));
+        BinaryExpr binaryExpression = new BinaryExpr(expression1, Operator.PLUS, expression2);
+        Expr result = binaryExpression.resolve();
+        Assertions.assertEquals(20.0, result.getValue());
+        Assertions.assertEquals(2, result.getDistanceUnit().getPower());
+        Assertions.assertEquals(1, result.getTemperatureUnit().getPower());
+    }
+
+    @Test
+    public void testAddWithDifferentPowerError() {
+        Expr expression1 = new Expr(10.0, new DistanceUnit(System.METER, 1), new TemperatureUnit(System.CELSIUS, 1));
+        Expr expression2 = new Expr(10.0, new DistanceUnit(System.METER, 2), new TemperatureUnit(System.CELSIUS, 1));
+        BinaryExpr binaryExpression = new BinaryExpr(expression1, Operator.PLUS, expression2);
+        Exception error = null;
+        try {
+            Expr result = binaryExpression.resolve();
+        }
+        catch (Exception e) {
+            error = e;
+        }
+        assert error != null;
+        Assertions.assertEquals(error.getMessage(), "Incompatible units to sum");
+    }
+
+    //ExpressionTests
+
+    @Test
+    public void testMultipleOperations() {
+        Expr expr1 = new Expr(1.0, new DistanceUnit(new Kilometer(), 1), new TemperatureUnit(System.CELSIUS, 0));
+        Expr expr2 = new Expr(1.0, new DistanceUnit(System.METER, 0), new TemperatureUnit(System.CELSIUS, 1));
+        Expr expr3 = new Expr(10.0, new DistanceUnit(System.METER, 1), new TemperatureUnit(System.CELSIUS, 1));
+        MultiplicationExpression multiplicationExpression = new MultiplicationExpression(expr1, expr2);
+        SumExpression sumExpression = new SumExpression(multiplicationExpression.getValue(), expr3);
+        Expr result = sumExpression.getValue();
+        Assertions.assertEquals(1010.0, result.getValue());
+        Assertions.assertEquals(1, result.getDistanceUnit().getPower());
+        Assertions.assertEquals(1, result.getTemperatureUnit().getPower());
+    }
+
+    @Test
+    public void testDivisionOperation() {
+        Expr expr1 = new Expr(1000.0, new DistanceUnit(new Kilometer(), -1), new TemperatureUnit(System.CELSIUS, 0));
+        Expr expr2 = new Expr(1.0, new DistanceUnit(System.METER, 0), new TemperatureUnit(System.CELSIUS, 1));
+        Expr expr3 = new Expr(10.0, new DistanceUnit(System.METER, -1), new TemperatureUnit(System.CELSIUS, -1));
+        DivisionExpression divisionExpression = new DivisionExpression(expr1, expr2);
+        SumExpression sumExpression = new SumExpression(divisionExpression.getValue(), expr3);
+        Expr result = sumExpression.getValue();
+        Assertions.assertEquals(11.0, result.getValue());
+        Assertions.assertEquals(-1, result.getDistanceUnit().getPower());
+        Assertions.assertEquals(-1, result.getTemperatureUnit().getPower());
     }
 
 }
