@@ -1,6 +1,6 @@
 package CompleteTp.Unit;
 
-public class Unit {
+public abstract class Unit {
 
     private String symbol;
     private Integer power;
@@ -10,11 +10,13 @@ public class Unit {
         this.power = power;
     }
 
+    public abstract Double toGenericValue(Double value);
+
     public String getSymbol() {
-        return symbol;
+        return this.symbol;
     }
 
     public Integer getPower() {
-        return power;
+        return this.power;
     }
 }
