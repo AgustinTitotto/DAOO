@@ -6,6 +6,7 @@ import CompleteTp.Operations.Expr;
 import CompleteTp.Operations.MultiplicationExpression;
 import CompleteTp.Operations.SumExpression;
 import CompleteTp.System;
+import CompleteTp.TemperatureSystem.Celsius;
 import CompleteTp.Unit.DistanceUnit;
 import CompleteTp.Unit.TemperatureUnit;
 import org.junit.jupiter.api.Assertions;
@@ -111,6 +112,17 @@ public class AbstractExpressionTest {
         Assertions.assertEquals(11.0, result.getValue());
         Assertions.assertEquals(-1, result.getDistanceUnit().getPower());
         Assertions.assertEquals(-1, result.getTemperatureUnit().getPower());
+    }
+
+    @Test
+    public void testMultiplication() {
+        Expr expr1 = new Expr(40.0);
+        Expr expr2 = new Expr(2.0, new DistanceUnit(new Meter(), 1), new TemperatureUnit(new Celsius(), 0));
+        MultiplicationExpression multiplicationExpression = new MultiplicationExpression(expr1, expr2);
+        Expr result = multiplicationExpression.getValue();
+        Assertions.assertEquals(80.0, result.getValue());
+        Assertions.assertEquals(1, result.getDistanceUnit().getPower());
+        Assertions.assertEquals(System.METER, result.getDistanceUnit().getType());
     }
 
 }

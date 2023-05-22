@@ -28,15 +28,10 @@ public class MultiplicationExpression implements Expression{
     }
 
     private Double getValue(Expr expr) {
-        if (expr.getTemperatureUnit().getPower() != 0) {
-            return Math.pow(expr.getTemperatureUnit().getType().accept(System.CELSIUS, getDistancePower(expr)), expr.getTemperatureUnit().getPower());
-        }
-        else {
-            return expr.getTemperatureUnit().getType().accept(System.CELSIUS, getDistancePower(expr));
-        }
+        return expr.getTemperatureUnit().getType().accept(System.CELSIUS, getDistanceValue(expr));
     }
 
-    private static double getDistancePower(Expr expr) {
+    private double getDistanceValue(Expr expr) {
         Integer power = expr.getDistanceUnit().getPower();
         return expr.getDistanceUnit().getType().accept(System.METER, expr.getValue(), power);
     }

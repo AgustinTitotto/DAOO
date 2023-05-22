@@ -28,15 +28,10 @@ public class DivisionExpression implements Expression {
     }
 
     private Double getValue(Expr expr) {
-        if (expr.getTemperatureUnit().getPower() != 0) {
-            return expr.getTemperatureUnit().getType().accept(System.CELSIUS, getDistanceValue(expr));
-        }
-        else {
-            return expr.getTemperatureUnit().getType().accept(System.CELSIUS, getDistanceValue(expr));
-        }
+        return expr.getTemperatureUnit().getType().accept(System.CELSIUS, getDistanceValue(expr));
     }
 
-    private static double getDistanceValue(Expr expr) {
+    private double getDistanceValue(Expr expr) {
         Integer power = expr.getDistanceUnit().getPower();
         return expr.getDistanceUnit().getType().accept(System.METER, expr.getValue(), power);
 
