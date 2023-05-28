@@ -1,6 +1,6 @@
 package CompleteTp.MetricSystem;
 
-public interface Distance {
+import CompleteTp.Constant;
 
-    Double accept(DistanceVisitor visitor, Double value, Integer power);
+public interface Distance extends Constant {
 }

@@ -1,25 +1,18 @@
 package CompleteTp.MetricSystem;
 
 
-public class Meter implements Distance, DistanceVisitor{
+import CompleteTp.Constant;
 
-    @Override
-    public Double accept(DistanceVisitor visitor, Double value, Integer power) {
-        return visitor.toMeter(this, value, power);
+public class Meter implements Distance {
+
+    private final double constant;
+
+    public Meter() {
+        this.constant = 1;
     }
 
     @Override
-    public Double toMeter(Kilometer kilometer, Double value, Integer power) {
-        return value * Math.pow(1000.0, power);
-    }
-
-    @Override
-    public Double toMeter(Centimeter centimeter, Double value, Integer power) {
-        return value / Math.pow(100.0, power);
-    }
-
-    @Override
-    public Double toMeter(Meter meter, Double value, Integer power) {
-        return value;
+    public double getConstant() {
+        return this.constant;
     }
 }

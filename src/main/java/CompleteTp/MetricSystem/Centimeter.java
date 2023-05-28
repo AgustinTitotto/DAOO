@@ -1,13 +1,17 @@
 package CompleteTp.MetricSystem;
 
+import CompleteTp.Constant;
+
 public class Centimeter implements Distance {
 
-    public Centimeter() {
+    private final double constant;
 
+    public Centimeter() {
+        this.constant = 0.01;
     }
 
     @Override
-    public Double accept(DistanceVisitor visitor, Double value, Integer power) {
-        return visitor.toMeter(this, value, power);
+    public double getConstant() {
+        return this.constant;
     }
 }

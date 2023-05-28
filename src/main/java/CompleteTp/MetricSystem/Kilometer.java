@@ -1,16 +1,17 @@
 package CompleteTp.MetricSystem;
 
+import CompleteTp.Constant;
+
 public class Kilometer implements Distance {
 
-    public Kilometer() {
+    private final double constant;
 
+    public Kilometer() {
+        this.constant = 1000.0;
     }
 
-
-
-
     @Override
-    public Double accept(DistanceVisitor visitor, Double value, Integer power) {
-        return visitor.toMeter(this, value, power);
+    public double getConstant() {
+        return this.constant;
     }
 }

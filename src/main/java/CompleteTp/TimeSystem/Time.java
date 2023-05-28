@@ -1,9 +1,7 @@
 package CompleteTp.TimeSystem;
 
+import CompleteTp.Constant;
 
-
-public interface Time {
-
-    Double accept(TimeVisitor visitor, Double value);
+public interface Time extends Constant {
 
 }
