@@ -1,8 +1,5 @@
 package CompleteTp.MetricSystem;
 
-
-import CompleteTp.Constant;
-
 public class Meter implements Distance {
 
     private final double constant;
@@ -13,6 +10,6 @@ public class Meter implements Distance {
 
     @Override
     public double getConstant() {
-        return this.constant;
+        return constant;
     }
 }

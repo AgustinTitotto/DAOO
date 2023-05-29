@@ -17,6 +17,10 @@ public class Expression {
     private final Double value;
     private final List<Unit> units;
 
+    public Expression(Double value) {
+        this.value = value;
+        this.units = new ArrayList<>();
+    }
 
     public Expression(Double value, List<Unit> units) {
         this.value = value;
@@ -31,24 +35,24 @@ public class Expression {
         return units;
     }
 
-    public Expression sum(Expression expression) {
+    public Expression sum(Expression otherExpression) {
         Expression left = convertToBasic(this);
-        Expression right = convertToBasic(expression);
+        Expression right = convertToBasic(otherExpression);
         if (unitsAreCompatible(left.getUnits(), right.getUnits())) {
             return new Expression(left.getValue() + right.getValue(), units);
         }
         else throw new RuntimeException("Incompatible types to sum");
     }
 
-    public Expression multiplication(Expression expression) {
+    public Expression multiplication(Expression otherExpression) {
         Expression left = convertToBasic(this);
-        Expression right = convertToBasic(expression);
+        Expression right = convertToBasic(otherExpression);
         return new Expression(left.getValue() * right.getValue(), getResultUnits(left.getUnits(), right.getUnits(), true));
     }
 
-    public Expression division(Expression expression) {
+    public Expression division(Expression otherExpression) {
         Expression left = convertToBasic(this);
-        Expression right = convertToBasic(expression);
+        Expression right = convertToBasic(otherExpression);
         return new Expression(left.getValue() / right.getValue(), getResultUnits(left.getUnits(), right.getUnits(), false));
     }
 

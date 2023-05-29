@@ -1,8 +1,5 @@
 package CompleteTp.TimeSystem;
 
-
-import CompleteTp.Constant;
-
 public class Hour implements Time {
 
     private final double constant;
@@ -13,6 +10,6 @@ public class Hour implements Time {
 
     @Override
     public double getConstant() {
-        return this.constant;
+        return constant;
     }
 }

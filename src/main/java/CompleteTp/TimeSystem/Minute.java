@@ -1,7 +1,5 @@
 package CompleteTp.TimeSystem;
 
-import CompleteTp.Constant;
-
 public class Minute implements Time {
 
     private final double constant;
@@ -12,6 +10,6 @@ public class Minute implements Time {
 
     @Override
     public double getConstant() {
-        return this.constant;
+        return constant;
     }
 }

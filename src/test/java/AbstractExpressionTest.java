@@ -1,24 +1,20 @@
-import CompleteTp.MetricSystem.Kilometer;
 import CompleteTp.MetricSystem.Meter;
 import CompleteTp.Operations.Expression;
-import CompleteTp.TimeSystem.Minute;
 import CompleteTp.TimeSystem.Second;
 import CompleteTp.Unit.Unit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static CompleteTp.System.METER;
-import static CompleteTp.System.SECOND;
+import static CompleteTp.System.*;
 
 public class AbstractExpressionTest {
 
 
     @Test
-    public void convertToGeneral() {
-        Expression expression = new Expression(1.0, List.of(new Unit(new Kilometer(), 2), new Unit(new Minute(), 1)));
+    public void testConvertToGeneral() {
+        Expression expression = new Expression(1.0, List.of(new Unit(KILOMETER, 2), new Unit(MINUTE, 1)));
         Expression result = expression.convertToBasic(expression);
         Assertions.assertEquals(1000060.0, result.getValue());
         Assertions.assertEquals(2, result.getUnits().get(0).getPower());
@@ -26,7 +22,7 @@ public class AbstractExpressionTest {
     }
 
     @Test
-    public void simpleSum() {
+    public void testSimpleSum() {
         Expression expression1 = new Expression(10.0, List.of(new Unit(METER, 1)));
         Expression expression2 = new Expression(10.0, List.of(new Unit(METER, 1)));
         Expression result = expression1.sum(expression2);
@@ -34,20 +30,20 @@ public class AbstractExpressionTest {
     }
 
     @Test
-    public void sumWithDifferentUnitsOfSameType() {
+    public void testSumWithDifferentUnitsOfSameType() {
         Expression expression1 = new Expression(1000.0, List.of(new Unit(METER, 1)));
-        Expression expression2 = new Expression(1.0, List.of(new Unit(new Kilometer(), 1)));
+        Expression expression2 = new Expression(1.0, List.of(new Unit(KILOMETER, 1)));
         Expression result = expression1.sum(expression2);
         Assertions.assertEquals(2000.0, result.getValue());
     }
 
     @Test
-    public void sumWithMetersAndTimeShouldNotWork() {
+    public void testSumWithMetersAndTimeShouldNotWork() {
         Expression expression1 = new Expression(1000.0, List.of(new Unit(METER, 1)));
-        Expression expression2 = new Expression(1.0, List.of(new Unit(new Minute(), 1)));
+        Expression expression2 = new Expression(1.0, List.of(new Unit(MINUTE, 1)));
         Exception error = null;
         try {
-            Expression result = expression1.sum(expression2);
+            expression1.sum(expression2);
         }
         catch (Exception e) {
             error = e;
@@ -57,9 +53,9 @@ public class AbstractExpressionTest {
     }
 
     @Test
-    public void multiplicationWithDifferentUnitsOfSameType() {
+    public void testMultiplicationWithDifferentUnitsOfSameType() {
         Expression expression1 = new Expression(1000.0, List.of(new Unit(METER, 1)));
-        Expression expression2 = new Expression(1.0, List.of(new Unit(new Kilometer(), 1)));
+        Expression expression2 = new Expression(1.0, List.of(new Unit(KILOMETER, 1)));
         Expression result = expression1.multiplication(expression2);
         Assertions.assertEquals(1000000.0, result.getValue());
         Assertions.assertEquals(Meter.class, result.getUnits().get(0).getConstant().getClass());
@@ -67,9 +63,9 @@ public class AbstractExpressionTest {
     }
 
     @Test
-    public void multiplicationOfConstantWithUnit() {
-        Expression expression1 = new Expression(1000.0, new ArrayList<>());
-        Expression expression2 = new Expression(1.0, List.of(new Unit(new Kilometer(), 1)));
+    public void testMultiplicationOfConstantWithUnit() {
+        Expression expression1 = new Expression(1000.0);
+        Expression expression2 = new Expression(1.0, List.of(new Unit(KILOMETER, 1)));
         Expression result = expression1.multiplication(expression2);
         Assertions.assertEquals(1000000.0, result.getValue());
         Assertions.assertEquals(Meter.class, result.getUnits().get(0).getConstant().getClass());
@@ -77,7 +73,7 @@ public class AbstractExpressionTest {
     }
 
     @Test
-    public void multiplicationWhenPowerGives0() {
+    public void testMultiplicationWhenPowerGives0() {
         Expression expression1 = new Expression(10.0, List.of(new Unit(METER, 1)));
         Expression expression2 = new Expression(10.0, List.of(new Unit(METER, -1)));
         Expression result = expression1.multiplication(expression2);
@@ -86,7 +82,7 @@ public class AbstractExpressionTest {
     }
 
     @Test
-    public void divisionWhenPowerGives0AndTheMultiplyUnit() {
+    public void testDivisionWhenPowerGives0AndTheMultiplyUnit() {
         Expression expression1 = new Expression(10.0, List.of(new Unit(METER, 1)));
         Expression expression2 = new Expression(10.0, List.of(new Unit(METER, 1)));
         Expression result = expression1.division(expression2);

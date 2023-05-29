@@ -21,6 +21,6 @@ public class Unit {
     }
 
     public double toConstant(Double value) {
-        return value * Math.pow(this.constant.getConstant(), this.power);
+        return value * Math.pow(constant.getConstant(), power);
     }
 }
