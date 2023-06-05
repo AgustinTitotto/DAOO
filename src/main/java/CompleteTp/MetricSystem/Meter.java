@@ -12,4 +12,9 @@ public class Meter implements Distance {
     public double getConstant() {
         return constant;
     }
+
+    @Override
+    public boolean isDistance() {
+        return true;
+    }
 }

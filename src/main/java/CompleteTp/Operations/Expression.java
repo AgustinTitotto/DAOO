@@ -1,7 +1,5 @@
 package CompleteTp.Operations;
 
-import CompleteTp.MetricSystem.Distance;
-import CompleteTp.TimeSystem.Time;
 import CompleteTp.Unit.Unit;
 
 import java.util.ArrayList;
@@ -47,23 +45,23 @@ public class Expression {
     public Expression multiplication(Expression otherExpression) {
         Expression left = convertToBasic(this);
         Expression right = convertToBasic(otherExpression);
-        return new Expression(left.getValue() * right.getValue(), getResultUnits(left.getUnits(), right.getUnits(), true));
+        return new Expression(left.getValue() * right.getValue(), getMultiplicationResultUnits(left.getUnits(), right.getUnits()));
     }
 
     public Expression division(Expression otherExpression) {
         Expression left = convertToBasic(this);
         Expression right = convertToBasic(otherExpression);
-        return new Expression(left.getValue() / right.getValue(), getResultUnits(left.getUnits(), right.getUnits(), false));
+        return new Expression(left.getValue() / right.getValue(), getDivisionResultUnits(left.getUnits(), right.getUnits()));
     }
 
     public Expression convertToBasic(Expression expression) {
         List<Unit> tempUnits = expression.getUnits();
         List<Unit> newUnits = new ArrayList<>();
         for (Unit unit: tempUnits) {
-            if (unit.getConstant() instanceof Distance) {
+            if (unit.getConstant().isDistance()) {
                 newUnits.add(new Unit(METER, unit.getPower()));
             }
-            if (unit.getConstant() instanceof Time) {
+            if (!unit.getConstant().isDistance()) {
                 newUnits.add(new Unit(SECOND, unit.getPower()));
             }
         }
@@ -72,9 +70,9 @@ public class Expression {
 
     private Double getBasicValue(Double value, List<Unit> units) {
         if (units.size() == 0) return value;
-        double finalValue = 0;
+        double finalValue = value;
         for (Unit unit: units) {
-            finalValue = finalValue + unit.toConstant(value);
+            finalValue = finalValue * unit.getFactor();
         }
         return finalValue;
     }
@@ -100,7 +98,7 @@ public class Expression {
         return tempList.isEmpty();
     }
 
-    private List<Unit> getResultUnits(List<Unit> units1, List<Unit> units2, boolean multiplication) {
+    private List<Unit> getMultiplicationResultUnits(List<Unit> units1, List<Unit> units2) {
         List<Unit> result = new ArrayList<>();
         List<Unit> tempList = new ArrayList<>(units2);
         for (Unit unit : units1) {
@@ -109,11 +107,8 @@ public class Expression {
             while (iterator.hasNext()) {
                 Unit unit2 = iterator.next();
                 if (unit.getConstant().getClass().equals(unit2.getConstant().getClass())) {
-                    if (multiplication && unit.getPower() + unit2.getPower() != 0) {
+                    if (unit.getPower() + unit2.getPower() != 0) {
                         result.add(new Unit(unit.getConstant(), unit.getPower() + unit2.getPower()));
-                    }
-                    else if (!multiplication && unit.getPower() - unit2.getPower() != 0){
-                        result.add(new Unit(unit.getConstant(), unit.getPower() - unit2.getPower()));
                     }
                     iterator.remove();
                     foundMatch = true;
@@ -126,6 +121,35 @@ public class Expression {
         }
         if (!tempList.isEmpty()) {
             result.addAll(tempList);
+        }
+        return result;
+    }
+
+    private List<Unit> getDivisionResultUnits(List<Unit> units1, List<Unit> units2) {
+        List<Unit> result = new ArrayList<>();
+        List<Unit> tempList = new ArrayList<>(units2);
+        for (Unit unit : units1) {
+            boolean foundMatch = false;
+            Iterator<Unit> iterator = tempList.iterator();
+            while (iterator.hasNext()) {
+                Unit unit2 = iterator.next();
+                if (unit.getConstant().getClass().equals(unit2.getConstant().getClass())) {
+                    if (unit.getPower() - unit2.getPower() != 0){
+                        result.add(new Unit(unit.getConstant(), unit.getPower() - unit2.getPower()));
+                    }
+                    iterator.remove();
+                    foundMatch = true;
+                    break;
+                }
+            }
+            if (!foundMatch) {
+                result.add(unit);
+            }
+        }
+        if (!tempList.isEmpty()) {
+            for (Unit unit: tempList) {
+                result.add(new Unit(unit.getConstant(), unit.getPower() * (-1)));
+            }
         }
         return result;
     }

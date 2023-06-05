@@ -14,11 +14,11 @@ public class AbstractExpressionTest {
 
     @Test
     public void testConvertToGeneral() {
-        Expression expression = new Expression(1.0, List.of(new Unit(KILOMETER, 2), new Unit(MINUTE, 1)));
+        Expression expression = new Expression(1.0, List.of(new Unit(KILOMETER, 1), new Unit(MINUTE, 2)));
         Expression result = expression.convertToBasic(expression);
-        Assertions.assertEquals(1000060.0, result.getValue());
-        Assertions.assertEquals(2, result.getUnits().get(0).getPower());
-        Assertions.assertEquals(1, result.getUnits().get(1).getPower());
+        Assertions.assertEquals(3600000, result.getValue());
+        Assertions.assertEquals(1, result.getUnits().get(0).getPower());
+        Assertions.assertEquals(2, result.getUnits().get(1).getPower());
     }
 
     @Test
@@ -30,17 +30,38 @@ public class AbstractExpressionTest {
     }
 
     @Test
-    public void testSumWithDifferentUnitsOfSameType() {
+    public void testSumWithDifferentUnitsOfSameTypeDistance() {
         Expression expression1 = new Expression(1000.0, List.of(new Unit(METER, 1)));
         Expression expression2 = new Expression(1.0, List.of(new Unit(KILOMETER, 1)));
         Expression result = expression1.sum(expression2);
         Assertions.assertEquals(2000.0, result.getValue());
+        Assertions.assertEquals(Meter.class, result.getUnits().get(0).getConstant().getClass());
+    }
+
+    @Test
+    public void testSumWithDifferentUnitsOfSameTypeTime() {
+        Expression expression1 = new Expression(60.0, List.of(new Unit(SECOND, 1)));
+        Expression expression2 = new Expression(1.0, List.of(new Unit(MINUTE, 1)));
+        Expression result = expression1.sum(expression2);
+        Assertions.assertEquals(120.0, result.getValue());
+        Assertions.assertEquals(Second.class, result.getUnits().get(0).getConstant().getClass());
+    }
+
+    @Test
+    public void testSumWithDifferentUnitsInDifferentOrder() {
+        Expression expression1 = new Expression(10.0, List.of(new Unit(METER, 1), new Unit(SECOND, 1)));
+        Expression expression2 = new Expression(10.0, List.of(new Unit(SECOND, 1), new Unit(METER, 1)));
+        Expression result = expression1.sum(expression2);
+        Assertions.assertEquals(20.0, result.getValue());
+        Assertions.assertEquals(2, result.getUnits().size());
+        Assertions.assertEquals(Meter.class, result.getUnits().get(0).getConstant().getClass());
+        Assertions.assertEquals(Second.class, result.getUnits().get(1).getConstant().getClass());
     }
 
     @Test
     public void testSumWithMetersAndTimeShouldNotWork() {
-        Expression expression1 = new Expression(1000.0, List.of(new Unit(METER, 1)));
-        Expression expression2 = new Expression(1.0, List.of(new Unit(MINUTE, 1)));
+        Expression expression1 = new Expression(1.0, List.of(new Unit(METER, 1)));
+        Expression expression2 = new Expression(1.0, List.of(new Unit(SECOND, 1)));
         Exception error = null;
         try {
             expression1.sum(expression2);
@@ -50,6 +71,16 @@ public class AbstractExpressionTest {
         }
         assert error != null;
         Assertions.assertEquals("Incompatible types to sum", error.getMessage());
+    }
+
+    @Test
+    public void testMultiplicationOfConstantWithUnit() {
+        Expression expression1 = new Expression(1000.0);
+        Expression expression2 = new Expression(1.0, List.of(new Unit(METER, 1)));
+        Expression result = expression1.multiplication(expression2);
+        Assertions.assertEquals(1000.0, result.getValue());
+        Assertions.assertEquals(Meter.class, result.getUnits().get(0).getConstant().getClass());
+        Assertions.assertEquals(1, result.getUnits().get(0).getPower());
     }
 
     @Test
@@ -63,13 +94,14 @@ public class AbstractExpressionTest {
     }
 
     @Test
-    public void testMultiplicationOfConstantWithUnit() {
-        Expression expression1 = new Expression(1000.0);
-        Expression expression2 = new Expression(1.0, List.of(new Unit(KILOMETER, 1)));
+    public void testMultiplicationWithDifferentUnitsOfDifferentType() {
+        Expression expression1 = new Expression(2.0, List.of(new Unit(METER, 1)));
+        Expression expression2 = new Expression(1.0, List.of(new Unit(MINUTE, 1)));
         Expression result = expression1.multiplication(expression2);
-        Assertions.assertEquals(1000000.0, result.getValue());
+        Assertions.assertEquals(120.0, result.getValue());
+        Assertions.assertEquals(2.0, result.getUnits().size());
         Assertions.assertEquals(Meter.class, result.getUnits().get(0).getConstant().getClass());
-        Assertions.assertEquals(1, result.getUnits().get(0).getPower());
+        Assertions.assertEquals(Second.class, result.getUnits().get(1).getConstant().getClass());
     }
 
     @Test
@@ -78,6 +110,37 @@ public class AbstractExpressionTest {
         Expression expression2 = new Expression(10.0, List.of(new Unit(METER, -1)));
         Expression result = expression1.multiplication(expression2);
         Assertions.assertEquals(100.0, result.getValue());
+        Assertions.assertEquals(0, result.getUnits().size());
+    }
+
+    @Test
+    public void testDivisionOfConstantWithUnit() {
+        Expression expression1 = new Expression(1000.0);
+        Expression expression2 = new Expression(1.0, List.of(new Unit(METER, 1)));
+        Expression result = expression1.division(expression2);
+        Assertions.assertEquals(1000.0, result.getValue());
+        Assertions.assertEquals(Meter.class, result.getUnits().get(0).getConstant().getClass());
+        Assertions.assertEquals(-1, result.getUnits().get(0).getPower());
+    }
+
+    @Test
+    public void testDivisionWithDifferentUnitsOfDifferentType() {
+        Expression expression1 = new Expression(10.0, List.of(new Unit(METER, 1)));
+        Expression expression2 = new Expression(10.0, List.of(new Unit(SECOND, 1)));
+        Expression result = expression1.division(expression2);
+        Assertions.assertEquals(1.0, result.getValue());
+        Assertions.assertEquals(2.0, result.getUnits().size());
+        Assertions.assertEquals(Meter.class, result.getUnits().get(0).getConstant().getClass());
+        Assertions.assertEquals(Second.class, result.getUnits().get(1).getConstant().getClass());
+        Assertions.assertEquals(-1, result.getUnits().get(1).getPower());
+    }
+
+    @Test
+    public void testDivisionWhenPowerGives0() {
+        Expression expression1 = new Expression(10.0, List.of(new Unit(METER, 1)));
+        Expression expression2 = new Expression(10.0, List.of(new Unit(METER, 1)));
+        Expression result = expression1.division(expression2);
+        Assertions.assertEquals(1.0, result.getValue());
         Assertions.assertEquals(0, result.getUnits().size());
     }
 

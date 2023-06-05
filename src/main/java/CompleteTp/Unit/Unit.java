@@ -20,7 +20,7 @@ public class Unit {
         return power;
     }
 
-    public double toConstant(Double value) {
-        return value * Math.pow(constant.getConstant(), power);
+    public Double getFactor() {
+        return Math.pow(this.getConstant().getConstant(), this.getPower());
     }
 }

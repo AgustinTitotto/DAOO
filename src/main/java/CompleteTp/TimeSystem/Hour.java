@@ -12,4 +12,9 @@ public class Hour implements Time {
     public double getConstant() {
         return constant;
     }
+
+    @Override
+    public boolean isDistance() {
+        return false;
+    }
 }

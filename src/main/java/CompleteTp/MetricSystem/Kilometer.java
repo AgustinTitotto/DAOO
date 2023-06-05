@@ -13,5 +13,8 @@ public class Kilometer implements Distance {
         return constant;
     }
 
-
+    @Override
+    public boolean isDistance() {
+        return true;
+    }
 }

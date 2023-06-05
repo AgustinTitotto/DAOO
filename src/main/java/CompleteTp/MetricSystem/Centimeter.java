@@ -12,4 +12,9 @@ public class Centimeter implements Distance {
     public double getConstant() {
         return constant;
     }
+
+    @Override
+    public boolean isDistance() {
+        return true;
+    }
 }
